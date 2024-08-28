@@ -112,6 +112,7 @@ inline bool GetCatacombsPackGOGPath(fs::path& path)
 
     return isGogCatacombsPathFound;
 #else
+// TODO: Implement for amigaos4 a way to find the paths for the GOG Catacombs Pack
     return false;
 #endif
 }

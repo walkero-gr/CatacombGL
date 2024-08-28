@@ -492,7 +492,13 @@ FileChunk* Decompressor::CarmackExpand(const uint8_t* compressedChunk)
     const uint16_t FARTAG = 0xa8;
 
     uint8_t *inptr = (uint8_t*)compressedChunk;
+
+#ifdef IS_BIG_ENDIAN
+    uint16_t lengthInBytes = __builtin_bswap16(*(uint16_t*)compressedChunk);
+#else
     const uint16_t lengthInBytes = *(uint16_t*)compressedChunk;
+#endif
+
     inptr += 2;
 
     FileChunk* decompressedChunk = new FileChunk(lengthInBytes);
@@ -502,7 +508,11 @@ FileChunk* Decompressor::CarmackExpand(const uint8_t* compressedChunk)
 
     while (remainingLengthInWords)
     {
+#ifdef IS_BIG_ENDIAN
+        uint16_t ch = __builtin_bswap16(*(uint16_t*)(inptr));
+#else
         uint16_t ch = *(uint16_t*)(inptr);
+#endif
         inptr += 2;
         const uint16_t chhigh = ch >> 8;
         uint16_t count = ch & 0xff;

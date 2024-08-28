@@ -90,10 +90,11 @@ fs::path SystemSDL::FindConfigurationFile() const
 
 #elif defined (__linux__)
     filenamePath = fs::path(getenv("HOME")) / ".config";
-
+    filenamePath /= "CatacombGL";
+#elif defined(__amigaos4__)
+    filenamePath = "PROGDIR:config";
 #endif
 
-    filenamePath /= "CatacombGL";
     return filenamePath;
 }
 
@@ -128,6 +129,9 @@ void SystemSDL::GetSubFolders(
 
 #elif defined (__linux__)
         workFolder = getenv("HOME");
+
+#elif defined (__amigaos4__)
+        workFolder = "PROGDIR:";
 
 #else
         workfolder = fs::current_path;

@@ -69,7 +69,11 @@ EgaGraph::EgaGraph(const egaGraphStaticData& staticData, const fs::path& path, I
     // Initialize picture table
     uint8_t* compressedPictureTable = (uint8_t*)&m_rawData->GetChunk()[m_staticData.offsets.at(0)];
     uint32_t compressedSize = GetChunkSize(0) - sizeof(uint32_t);
+#ifdef IS_BIG_ENDIAN
+    uint32_t uncompressedSize = __builtin_bswap32(*(uint32_t*)compressedPictureTable);
+#else
     uint32_t uncompressedSize = *(uint32_t*)compressedPictureTable;
+#endif
     FileChunk* pictureTableChunk = m_huffman->Decompress(&compressedPictureTable[sizeof(uint32_t)], compressedSize, uncompressedSize);
     m_pictureTable = new PictureTable(pictureTableChunk);
     delete pictureTableChunk;
@@ -90,7 +94,11 @@ EgaGraph::EgaGraph(const egaGraphStaticData& staticData, const fs::path& path, I
     // Initialize masked picture table
     uint8_t* compressedMaskedPictureTable = (uint8_t*)&m_rawData->GetChunk()[m_staticData.offsets.at(1)];
     uint32_t compressedSize2 = GetChunkSize(1) - sizeof(uint32_t);
+#ifdef IS_BIG_ENDIAN
+    uint32_t uncompressedSize2 = __builtin_bswap32(*(uint32_t*)compressedMaskedPictureTable);
+#else
     uint32_t uncompressedSize2 = *(uint32_t*)compressedMaskedPictureTable;
+#endif
     FileChunk* maskedPictureTableChunk = m_huffman->Decompress(&compressedMaskedPictureTable[sizeof(uint32_t)], compressedSize2, uncompressedSize2);
     m_maskedPictureTable = new PictureTable(maskedPictureTableChunk);
     delete maskedPictureTableChunk;
@@ -111,7 +119,11 @@ EgaGraph::EgaGraph(const egaGraphStaticData& staticData, const fs::path& path, I
     // Initialize sprites table
     uint8_t* compressedSpritesTable = (uint8_t*)&m_rawData->GetChunk()[m_staticData.offsets.at(2)];
     uint32_t compressedSize3 = GetChunkSize(2) - sizeof(uint32_t);
+#ifdef IS_BIG_ENDIAN
+    uint32_t uncompressedSize3 = __builtin_bswap32(*(uint32_t*)compressedSpritesTable);
+#else
     uint32_t uncompressedSize3 = *(uint32_t*)compressedSpritesTable;
+#endif
     FileChunk* spritesTableChunk = m_huffman->Decompress(&compressedSpritesTable[sizeof(uint32_t)], compressedSize3, uncompressedSize3);
     m_spriteTable = new SpriteTable(spritesTableChunk);
     delete spritesTableChunk;
@@ -233,7 +245,11 @@ Picture* EgaGraph::GetPicture(const uint16_t index)
         const bool transparent = ((index > m_staticData.indexOfFirstScaledPicture) && (index < m_staticData.indexOfFirstWallPicture));
         uint8_t* compressedPicture = (uint8_t*)&m_rawData->GetChunk()[m_staticData.offsets.at(index)];
         uint32_t compressedSize = GetChunkSize(index) - sizeof(uint32_t);
+#ifdef IS_BIG_ENDIAN
+        uint32_t uncompressedSize = __builtin_bswap32(*(uint32_t*)compressedPicture);
+#else
         uint32_t uncompressedSize = *(uint32_t*)compressedPicture;
+#endif
         FileChunk* pictureChunk = m_huffman->Decompress(&compressedPicture[sizeof(uint32_t)], compressedSize, uncompressedSize);
         const uint16_t imageWidth = m_pictureTable->GetWidth(pictureIndex);
         const uint16_t imageHeight = m_pictureTable->GetHeight(pictureIndex);
@@ -259,7 +275,11 @@ Picture* EgaGraph::GetMaskedPicture(const uint16_t index)
     {
         uint8_t* compressedPicture = (uint8_t*)&m_rawData->GetChunk()[m_staticData.offsets.at(index)];
         uint32_t compressedSize = GetChunkSize(index) - sizeof(uint32_t);
+#ifdef IS_BIG_ENDIAN
+        uint32_t uncompressedSize = __builtin_bswap32(*(uint32_t*)compressedPicture);
+#else
         uint32_t uncompressedSize = *(uint32_t*)compressedPicture;
+#endif
         FileChunk* pictureChunk = m_huffman->Decompress(&compressedPicture[sizeof(uint32_t)], compressedSize, uncompressedSize);
         const uint16_t imageWidth = m_maskedPictureTable->GetWidth(pictureIndex);
         const uint16_t imageHeight = m_maskedPictureTable->GetHeight(pictureIndex);
@@ -285,7 +305,11 @@ Picture* EgaGraph::GetSprite(const uint16_t index)
     {
         uint8_t* compressedPicture = (uint8_t*)&m_rawData->GetChunk()[m_staticData.offsets.at(index)];
         uint32_t compressedSize = GetChunkSize(index) - sizeof(uint32_t);
+#ifdef IS_BIG_ENDIAN
+        uint32_t uncompressedSize = __builtin_bswap32(*(uint32_t*)compressedPicture);
+#else
         uint32_t uncompressedSize = *(uint32_t*)compressedPicture;
+#endif
         FileChunk* pictureChunk = m_huffman->Decompress(&compressedPicture[sizeof(uint32_t)], compressedSize, uncompressedSize);
         const uint16_t imageWidth = m_spriteTable->GetWidth(pictureIndex);
         const uint16_t imageHeight = m_spriteTable->GetHeight(pictureIndex);
@@ -315,16 +339,28 @@ Font* EgaGraph::GetFont(const uint16_t index)
 
     uint8_t* compressedFont = (uint8_t*)&m_rawData->GetChunk()[m_staticData.offsets.at(index)];
     uint32_t compressedSize = GetChunkSize(index) - sizeof(uint32_t);
+#ifdef IS_BIG_ENDIAN
+    uint32_t uncompressedSize = __builtin_bswap32(*(uint32_t*)compressedFont);
+#else
     uint32_t uncompressedSize = *(uint32_t*)compressedFont;
+#endif
     FileChunk* fontChunk = m_huffman->Decompress(&compressedFont[sizeof(uint32_t)], compressedSize, uncompressedSize);
 
     const uint16_t NumChar = 256;
 
+#ifdef IS_BIG_ENDIAN
+    const uint16_t lineHeight = __builtin_bswap16(*(uint16_t*)&fontChunk->GetChunk()[0]);
+#else
     const uint16_t lineHeight = *(uint16_t*)&fontChunk->GetChunk()[0];
+#endif
     uint16_t characterOffset[NumChar];
     for (uint16_t i = 0; i < NumChar; i++)
     {
+#ifdef IS_BIG_ENDIAN
+        characterOffset[i] = __builtin_bswap16(*(uint16_t*)&fontChunk->GetChunk()[2 + (i * 2)]);
+#else
         characterOffset[i] = *(uint16_t*)&fontChunk->GetChunk()[2 + (i * 2)];
+#endif
     }
     uint8_t width[NumChar];
     for (uint16_t i = 0; i < 256; i++)
@@ -377,7 +413,11 @@ LevelLocationNames* EgaGraph::GetWorldLocationNames(const uint16_t index)
     {
         uint8_t* compressedLocationNames = (uint8_t*)&m_rawData->GetChunk()[m_staticData.offsets.at(index + m_staticData.indexOfFirstWorldLocationNames)];
         uint32_t compressedSize = GetChunkSize(m_staticData.indexOfFirstWorldLocationNames + index) - sizeof(uint32_t);
+#ifdef IS_BIG_ENDIAN
+        uint32_t uncompressedSize = __builtin_bswap32(*(uint32_t*)compressedLocationNames);
+#else
         uint32_t uncompressedSize = *(uint32_t*)compressedLocationNames;
+#endif
         FileChunk* locationNamesChunk = m_huffman->Decompress(&compressedLocationNames[sizeof(uint32_t)], compressedSize, uncompressedSize);
         m_worldLocationNames[index] = new LevelLocationNames(locationNamesChunk);
         delete locationNamesChunk;

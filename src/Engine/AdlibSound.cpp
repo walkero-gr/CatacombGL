@@ -36,9 +36,17 @@ AdlibSound::AdlibSound(const FileChunk* decompressedChunk) :
     const uint32_t headerSize = sizeof(m_length) + sizeof(m_priority) + sizeof(m_instruments) + sizeof(m_octave);
     if (decompressedChunk->GetSize() > headerSize)
     {
+#ifdef IS_BIG_ENDIAN
+        m_length = __builtin_bswap32(*(uint32_t*)&decompressedChunk->GetChunk()[0]);
+#else
         m_length = *(uint32_t*)&decompressedChunk->GetChunk()[0];
+#endif
         m_length = (m_length > decompressedChunk->GetSize() - headerSize) ? decompressedChunk->GetSize() - headerSize : m_length;
+#ifdef IS_BIG_ENDIAN
+        m_priority = __builtin_bswap16(*(uint16_t*)&decompressedChunk->GetChunk()[4]);
+#else
         m_priority = *(uint16_t*)&decompressedChunk->GetChunk()[4];
+#endif
         for (uint8_t j = 0; j < 16; j++)
         {
             m_instruments[j] = *(uint8_t*)&decompressedChunk->GetChunk()[6 + j];

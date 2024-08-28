@@ -30,6 +30,16 @@ SpriteTable::SpriteTable(FileChunk* decompressedChunk)
     uint8_t* chunk = decompressedChunk->GetChunk();
     for (uint16_t i = 0; i < m_count; i++)
     {
+    #ifdef IS_BIG_ENDIAN
+        m_width[i] = __builtin_bswap16(*(uint16_t*)&chunk[i * 16]) * 8;
+        m_height[i] = __builtin_bswap16(*(uint16_t*)&chunk[(i * 16) + 2]);
+        m_offsetX[i] = __builtin_bswap16(*(uint16_t*)&chunk[(i * 16) + 4]);
+        m_offsetY[i] = __builtin_bswap16(*(uint16_t*)&chunk[(i * 16) + 6]);
+        m_clippingLeft[i] = __builtin_bswap16(*(uint16_t*)&chunk[(i * 16) + 8]);
+        m_clippingTop[i] = __builtin_bswap16(*(uint16_t*)&chunk[(i * 16) + 10]);
+        m_clippingRight[i] = __builtin_bswap16(*(uint16_t*)&chunk[(i * 16) + 12]);
+        m_clippingBottom[i] = __builtin_bswap16(*(uint16_t*)&chunk[(i * 16) + 14]);
+    #else
         m_width[i] = *(uint16_t*)&chunk[i * 16] * 8;
         m_height[i] = *(uint16_t*)&chunk[(i * 16) + 2];
         m_offsetX[i] = *(uint16_t*)&chunk[(i * 16) + 4];
@@ -38,6 +48,7 @@ SpriteTable::SpriteTable(FileChunk* decompressedChunk)
         m_clippingTop[i] = *(uint16_t*)&chunk[(i * 16) + 10];
         m_clippingRight[i] = *(uint16_t*)&chunk[(i * 16) + 12];
         m_clippingBottom[i] = *(uint16_t*)&chunk[(i * 16) + 14];
+    #endif
     }
 
     if (m_count == 3)

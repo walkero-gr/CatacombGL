@@ -29,8 +29,13 @@ PictureTable::PictureTable(FileChunk* decompressedChunk) :
         uint8_t* chunk = decompressedChunk->GetChunk();
         for (uint16_t i = 0; i < m_count; i++)
         {
+#ifdef IS_BIG_ENDIAN
+            m_width[i] = __builtin_bswap16(*(uint16_t*)&chunk[i * 4]) * 8;
+            m_height[i] = __builtin_bswap16(*(uint16_t*)&chunk[(i * 4) + 2]);
+#else
             m_width[i] = *(uint16_t*)&chunk[i * 4] * 8;
             m_height[i] = *(uint16_t*)&chunk[(i * 4) + 2];
+#endif
         }
     }
 }

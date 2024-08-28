@@ -82,6 +82,9 @@ FileChunk* ext_BLoad(const fs::path SourceFile)
     // Compressed under new file format...
     //
     file.read((char*)&CompHeader.CompType, sizeof(CompHeader.CompType));
+#ifdef IS_BIG_ENDIAN
+    CompHeader.CompType = __builtin_bswap16(CompHeader.CompType);
+#endif
 
     if (CompHeader.CompType != 2)   // 2 == LZH
     {
@@ -90,7 +93,15 @@ FileChunk* ext_BLoad(const fs::path SourceFile)
     }
 
     file.read((char*)&CompHeader.OrginalLen, sizeof(CompHeader.OrginalLen));
+#ifdef IS_BIG_ENDIAN
+    CompHeader.OrginalLen = __builtin_bswap32(CompHeader.OrginalLen);
+#endif
+
     file.read((char*)&CompHeader.CompressLen, sizeof(CompHeader.CompressLen));
+
+#ifdef IS_BIG_ENDIAN
+    CompHeader.CompressLen = __builtin_bswap32(CompHeader.CompressLen);
+#endif
 
     SrcPtr = new FileChunk(CompHeader.CompressLen);
     file.read((char*)SrcPtr->GetChunk(), SrcPtr->GetSize());
@@ -149,7 +160,12 @@ bool Shape::LoadFromFile(const fs::path filename)
         return;
     ptr += 4;
 
+#ifdef IS_BIG_ENDIAN
+    std::size_t FileLen = *(uint32_t*)ptr;
+#else
     std::size_t FileLen = BE_Cross_Swap32(*(uint32_t*)ptr);
+#endif
+
     ptr += 4;
 
     if (!CmpChunk(ptr, "ILBM"))
@@ -159,16 +175,27 @@ bool Shape::LoadFromFile(const fs::path filename)
 
     while (FileLen != 0)
     {
+#ifdef IS_BIG_ENDIAN
+        uint32_t ChunkLen = *(int32_t*)(ptr+4);
+#else
         uint32_t ChunkLen = BE_Cross_Swap32(*(int32_t*)(ptr+4));
+#endif
         ChunkLen = (ChunkLen+1) & 0xFFFFFFFE;
 
         if (CmpChunk(ptr, "BMHD"))
         {
             ptr += 8;
+#ifdef IS_BIG_ENDIAN
+            width = ((struct BitMapHeader*)ptr)->w;
+            height = ((struct BitMapHeader*)ptr)->h;
+            m_offsetX = ((struct BitMapHeader*)ptr)->x;
+            m_offsetY = ((struct BitMapHeader*)ptr)->y;
+#else
             width = BE_Cross_Swap16(((struct BitMapHeader*)ptr)->w);
             height = BE_Cross_Swap16(((struct BitMapHeader*)ptr)->h);
             m_offsetX = BE_Cross_Swap16(((struct BitMapHeader*)ptr)->x);
             m_offsetY = BE_Cross_Swap16(((struct BitMapHeader*)ptr)->y);
+#endif
 
             numberOfPlanes = ((struct BitMapHeader*)ptr)->d;
             if (numberOfPlanes != 4)
@@ -185,7 +212,11 @@ bool Shape::LoadFromFile(const fs::path filename)
         else if (CmpChunk(ptr, "BODY"))
         {
             ptr += 4;
+#ifdef IS_BIG_ENDIAN
+            dataSize = *((int32_t*)ptr);
+#else
             dataSize = BE_Cross_Swap32(*((int32_t*)ptr));
+#endif
             ptr += 4;
 
             if (FileLen < dataSize)

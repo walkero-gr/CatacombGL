@@ -57,9 +57,9 @@ if(WIN32)
         SDL2::SDL2main
     )
 
-else()
-    # On Linux, it is assumed that the SDL2 development package is already installed.
-    find_package(SDL2 REQUIRED)
+# else()
+#     # On Linux, it is assumed that the SDL2 development package is already installed.
+#     find_package(SDL2 REQUIRED)
 
 endif()
 
@@ -130,7 +130,6 @@ target_link_libraries( CatacombGL
     CatacombGL_Armageddon
     CatacombGL_Apocalypse
     CatacombGL_Catacomb3D
-    OpenGL::GL
 )
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)

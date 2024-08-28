@@ -45,7 +45,7 @@
 #if defined (_WIN32)
 #define STR_CASE_CMP _strcmpi
 // POSIX compliant compiler
-#elif defined (__unix__) || (defined (__APPLE__) && defined (__MACH__))
+#elif defined (__unix__) || defined(__amigaos4__) || (defined (__APPLE__) && defined (__MACH__))
 #define STR_CASE_CMP strcasecmp
 // This should cover all relevant compilers
 // If a compiler is not covered please add an appropriate function here

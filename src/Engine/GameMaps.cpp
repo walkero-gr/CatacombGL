@@ -61,10 +61,17 @@ Level* GameMaps::GetLevelFromStart(const uint8_t mapIndex) const
 
     const uint16_t rlewTag = 0xABCD;    
     const uint8_t* headerStart = m_rawData->GetChunk() + m_staticData.offsets.at(mapIndex);
+#ifdef IS_BIG_ENDIAN
+    const uint32_t plane0Offset = __builtin_bswap32(*(uint32_t*)(headerStart));
+    const uint32_t plane2Offset = __builtin_bswap32(*(uint32_t*)(headerStart + 8));
+    const uint16_t plane0Length = __builtin_bswap16(*(uint16_t*)(headerStart + 12));
+    const uint16_t plane2Length = __builtin_bswap16(*(uint16_t*)(headerStart + 16));
+#else
     const uint32_t plane0Offset = *(uint32_t*)(headerStart);
     const uint32_t plane2Offset = *(uint32_t*)(headerStart + 8);
     const uint16_t plane0Length = *(uint16_t*)(headerStart + 12);
     const uint16_t plane2Length = *(uint16_t*)(headerStart + 16);
+#endif
 
     // Sanity check on plane 0 and 2
     if (plane0Offset + plane0Length > m_rawData->GetSize())
@@ -82,8 +89,13 @@ Level* GameMaps::GetLevelFromStart(const uint8_t mapIndex) const
             " ,total size: " + std::to_string(m_rawData->GetSize()) + ")");
     }
 
+#ifdef IS_BIG_ENDIAN
+    const uint16_t mapWidth = __builtin_bswap16(*(uint16_t*)(&(headerStart[18])));
+    const uint16_t mapHeight = __builtin_bswap16(*(uint16_t*)(&(headerStart[20])));
+#else
     const uint16_t mapWidth = *(uint16_t*)(&(headerStart[18]));
     const uint16_t mapHeight = *(uint16_t*)(&(headerStart[20]));
+#endif
 
     // Sanity check on map width and height
     if (mapWidth > MaxMapWidth)
@@ -201,8 +213,13 @@ Level* GameMaps::GetLevelFromDosSavedGame(const SavedGameInDosFormat* savedGameI
 
     // The dimensions of the map are retrieved from the GameMaps data
     const uint8_t* headerStart = m_rawData->GetChunk() + m_staticData.offsets.at(mapIndex);
+#ifdef IS_BIG_ENDIAN
+    const uint16_t mapWidth = __builtin_bswap16(*(uint16_t*)(&(headerStart[18])));
+    const uint16_t mapHeight = __builtin_bswap16(*(uint16_t*)(&(headerStart[20])));
+#else
     const uint16_t mapWidth = *(uint16_t*)(&(headerStart[18]));
     const uint16_t mapHeight = *(uint16_t*)(&(headerStart[20]));
+#endif
 
     const uint16_t* plane0 = (const uint16_t*)savedGameInDosFormat->GetPlane0()->GetChunk();
     const uint16_t* plane2 = (const uint16_t*)savedGameInDosFormat->GetPlane2()->GetChunk();
