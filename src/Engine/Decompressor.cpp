@@ -544,7 +544,12 @@ FileChunk* Decompressor::CarmackExpand(const uint8_t* compressedChunk)
             }
             else
             {
-                const uint16_t offset = *(uint16_t*)(inptr);
+                uint16_t offset;
+#ifdef IS_BIG_ENDIAN
+                offset = (*(inptr + 1) << 8) | *inptr;
+#else
+                offset = *(uint16_t*)(inptr);
+#endif
                 inptr += 2;
                 uint16_t *copyptr = (uint16_t*)(decompressedChunk->GetChunk()) + offset;
                 remainingLengthInWords -= count;

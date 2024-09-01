@@ -59,7 +59,7 @@ Level* GameMaps::GetLevelFromStart(const uint8_t mapIndex) const
 {
     Logging::Instance().AddLogMessage("Loading map " + std::to_string(mapIndex) + " from start");
 
-    const uint16_t rlewTag = 0xABCD;    
+    const uint16_t rlewTag = 0xABCD;
     const uint8_t* headerStart = m_rawData->GetChunk() + m_staticData.offsets.at(mapIndex);
 #ifdef IS_BIG_ENDIAN
     const uint32_t plane0Offset = __builtin_bswap32(*(uint32_t*)(headerStart));

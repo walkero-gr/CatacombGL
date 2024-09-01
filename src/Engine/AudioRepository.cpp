@@ -124,10 +124,6 @@ AdlibSound* AudioRepository::GetAdlibSound(const uint16_t index)
         uint32_t compressedSize = GetChunkSize(index + m_staticData.lastSound) - sizeof(uint32_t);
 #ifdef IS_BIG_ENDIAN
         uint32_t uncompressedSize = __builtin_bswap32(*(uint32_t*)compressedSound);
-        // uint32_t uncompressedSize = (compressedSound[3] << 24) |
-        //                             (compressedSound[2] << 16) |
-        //                             (compressedSound[1] << 8)  |
-        //                             (compressedSound[0]);
 #else
         uint32_t uncompressedSize = *(uint32_t*)compressedSound;
 #endif
@@ -158,17 +154,12 @@ FileChunk* AudioRepository::GetMusicTrack(const uint16_t index)
         uint32_t compressedSize = GetChunkSize(index + (m_staticData.lastSound * 3)) - sizeof(uint32_t);
 #ifdef IS_BIG_ENDIAN
         uint32_t uncompressedSize = __builtin_bswap32(*(uint32_t*)compressedSound);
-        // uint32_t uncompressedSize = (compressedSound[3] << 24) |
-        //                             (compressedSound[2] << 16) |
-        //                             (compressedSound[1] << 8)  |
-        //                             (compressedSound[0]);
 #else
         uint32_t uncompressedSize = *(uint32_t*)compressedSound;
 #endif
         FileChunk* soundChunk = m_huffman->Decompress(&compressedSound[sizeof(uint32_t)], compressedSize, uncompressedSize);
 #ifdef IS_BIG_ENDIAN
         const uint16_t musicTrackLength = __builtin_bswap16(*(uint16_t*)soundChunk->GetChunk());
-        // const uint16_t musicTrackLength = (soundChunk->GetChunk()[1] << 8) | soundChunk->GetChunk()[0];
 #else
         const uint16_t musicTrackLength = *(uint16_t*)soundChunk->GetChunk();
 #endif
