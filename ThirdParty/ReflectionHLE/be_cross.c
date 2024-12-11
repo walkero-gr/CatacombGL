@@ -44,6 +44,7 @@
 // Used for debugging
 void BE_Cross_LogMessage(BE_Log_Message_Class_T msgClass, const char *format, ...)
 {
+	return; // Disable logging for now
 	// TODO: For now we simply do this.
 	va_list args;
 	va_start(args, format);
