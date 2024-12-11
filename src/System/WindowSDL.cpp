@@ -44,8 +44,9 @@ void CreateGLWindow(int width, int height, int /*bits*/, SDL_Window*& window, SD
         SDL_WINDOWPOS_UNDEFINED,                    // initial y position
         width,                                      // width, in pixels
         height,                                     // height, in pixels
-        SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE    // flags - see below
+        SDL_WINDOW_OPENGL | SDL_WINDOW_MOUSE_GRABBED | SDL_WINDOW_RESIZABLE    // flags - see below
     );
+    SDL_ShowCursor(SDL_DISABLE);
 
     // Check that the window was successfully created
     if (window == nullptr)
