@@ -91,7 +91,9 @@ public:
     const ManaBar::ManaBarConfig& GetManaBarConfig() override;
     const CatalogInfo& GetCatalogInfo() const override;
     const SavedGameInDosFormatConfig& GetSavedGameInDosFormatConfig() const override;
-    const ISavedGameConverter& GetSavedGameConverter() const override;
+    ISavedGameConverter& GetSavedGameConverter() override;
+    bool IsCatacomb3D() const override;
+    bool IsCatacombAdventureSeries() const override;
 
 private:
     void DrawHealth(RenderableTiles& renderableTiles, const int16_t health);
@@ -108,5 +110,5 @@ private:
     IRenderer& m_renderer;
     HelpPages* m_helpPages;
     uint8_t m_helpPageIndex;
-    const SavedGameConverterAbyss m_savedGameConverter;
+    SavedGameConverterAbyss m_savedGameConverter;
 };

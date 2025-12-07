@@ -981,7 +981,17 @@ const SavedGameInDosFormatConfig& GameAbyss::GetSavedGameInDosFormatConfig() con
     return savedGameInDosFormatConfigAbyss;
 }
 
-const ISavedGameConverter& GameAbyss::GetSavedGameConverter() const
+ISavedGameConverter& GameAbyss::GetSavedGameConverter()
 {
     return m_savedGameConverter;
+}
+
+bool GameAbyss::IsCatacomb3D() const
+{
+    return false;
+}
+
+bool GameAbyss::IsCatacombAdventureSeries() const
+{
+    return true;
 }

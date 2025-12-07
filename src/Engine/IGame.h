@@ -115,7 +115,9 @@ public:
     virtual const ManaBar::ManaBarConfig& GetManaBarConfig() = 0;
     virtual const CatalogInfo& GetCatalogInfo() const = 0;
     virtual const SavedGameInDosFormatConfig& GetSavedGameInDosFormatConfig() const = 0;
-    virtual const ISavedGameConverter& GetSavedGameConverter() const = 0;
+    virtual ISavedGameConverter& GetSavedGameConverter() = 0;
+    virtual bool IsCatacomb3D() const = 0;
+    virtual bool IsCatacombAdventureSeries() const = 0;
 
 protected:
     GameMaps* m_gameMaps = nullptr;

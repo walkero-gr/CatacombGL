@@ -1,4 +1,4 @@
-// Copyright (C) 2019 Arno Ansems
+// Copyright (C) 2022 Arno Ansems
 // 
 // This program is free software: you can redistribute it and/or modify 
 // it under the terms of the GNU General Public License as published by 
@@ -13,27 +13,18 @@
 // You should have received a copy of the GNU General Public License 
 // along with this program.  If not, see http://www.gnu.org/licenses/ 
 
-//
-// GameDetectionCatacomb3D
-//
-// Data structures for detecting the Catacomb 3D game files.
-//
 #pragma once
 
-#include <stdint.h>
-#include <map>
-#include <string>
+#include <gtest/gtest.h>
+#include "../Engine/SavedGameInDosFormat.h"
 
-const std::map<std::string, uint32_t> catacomb3Dv100Files =
+class SavedGameConverterArmageddon_Test : public ::testing::Test
 {
-    std::make_pair("AUDIO.C3D",    5062),
-    std::make_pair("EGAGRAPH.C3D", 258007),
-    std::make_pair("GAMEMAPS.C3D", 14288)
-};
+public:
+    SavedGameConverterArmageddon_Test() = default;
+    virtual ~SavedGameConverterArmageddon_Test() = default;
 
-const std::map<std::string, uint32_t> catacomb3Dv122Files =
-{
-    std::make_pair("AUDIO.C3D",    5062),
-    std::make_pair("EGAGRAPH.C3D", 256899),
-    std::make_pair("GAMEMAPS.C3D", 14288)
+    void CheckDosObjectIsConvertible(const SavedGameInDosFormat::ObjectInDosFormat& dosObject);
+
+    static constexpr uint32_t m_farPointerOffset = 0x1A20000;
 };

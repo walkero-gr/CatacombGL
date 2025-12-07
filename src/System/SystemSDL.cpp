@@ -47,6 +47,16 @@ const fs::path& SystemSDL::GetConfigurationFilePath() const
     return m_configurationFile;
 }
 
+const std::filesystem::path& SystemSDL::GetSavedGamesPath() const
+{
+    return (m_customizedSavedGamesPath.empty()) ? m_configurationFile : m_customizedSavedGamesPath; 
+}
+
+void SystemSDL::SetCustomizedSavedGamesPath(const std::filesystem::path& customPath)
+{
+    m_customizedSavedGamesPath = customPath;
+}
+
 void SystemSDL::GetSavedGameNamesFromFolder(
     const fs::path& path,
     std::vector<std::string>& filesFound
@@ -66,7 +76,7 @@ void SystemSDL::GetSavedGameNamesFromFolder(
 
     for (const auto & entry : fs::directory_iterator(path))
     {
-        if (!entry.is_directory() && entry.path().extension() == ".sav")
+        if (!entry.is_directory() && (entry.path().extension() == ".sav" || entry.path().extension() == ".SAV"))
         {
             filesFound.push_back(entry.path().stem().string());
         }
@@ -127,7 +137,7 @@ void SystemSDL::GetSubFolders(
 
         return;
 
-#elif defined (__linux__)
+#elif defined (__linux__) or defined (__APPLE__)
         workFolder = getenv("HOME");
 
 #elif defined (__amigaos4__) || defined(__morphos__)

@@ -24,6 +24,10 @@
 #include <windows.h>
 #endif
 
+#ifdef __APPLE__
+#include <OpenGL/gl.h>
+#include <OpenGL/glext.h>
+#else
 #include <GL/gl.h>
 #if !defined(_WIN32) && !defined(__morphos__)
 #include <GL/glext.h>
@@ -34,8 +38,10 @@
 // Below is the specific definition from glext.h that is needed in this source file.
 static const unsigned int GL_CLAMP_TO_EDGE = 0x812F;
 #endif
+#endif
 #include <SDL_video.h>
 #include <cmath>
+#include <cstring>
 #include <string>
 
 const float FloorZ = 2.2f;

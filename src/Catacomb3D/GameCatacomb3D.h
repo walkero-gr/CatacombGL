@@ -32,7 +32,7 @@
 class GameCatacomb3D : public IGame
 {
 public:
-    GameCatacomb3D(const std::filesystem::path gamePath, const std::filesystem::path configPath, IRenderer& renderer);
+    GameCatacomb3D(const GameId gameId, const std::filesystem::path gamePath, const std::filesystem::path configPath, IRenderer& renderer);
     ~GameCatacomb3D();
 
     void SpawnActors(Level* level, const DifficultyLevel difficultyLevel) override;
@@ -94,7 +94,9 @@ public:
     const ManaBar::ManaBarConfig& GetManaBarConfig() override;
     const CatalogInfo& GetCatalogInfo() const override;
     const SavedGameInDosFormatConfig& GetSavedGameInDosFormatConfig() const override;
-    const ISavedGameConverter& GetSavedGameConverter() const override;
+    ISavedGameConverter& GetSavedGameConverter() override;
+    bool IsCatacomb3D() const override;
+    bool IsCatacombAdventureSeries() const override;
 
 private:
     void DrawStatusBarWideScreenMargin(const int16_t offsetX, const int16_t marginWidth);
@@ -105,6 +107,6 @@ private:
     const std::filesystem::path m_configPath;
     IRenderer& m_renderer;
     std::unique_ptr<HighScores> m_highScores;
-    const SavedGameConverterCatacomb3D m_savedGameConverter;
+    SavedGameConverterCatacomb3D m_savedGameConverter;
 };
 
