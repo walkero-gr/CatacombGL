@@ -36,7 +36,7 @@ bool CommandLineParser::compareStrings(const std::string& str1, const std::strin
         return false;
     }
 
-    for (int i = 0; i < str1.length(); ++i)
+    for (uint i = 0; i < str1.length(); ++i)
     {
         if (tolower(str1[i]) != tolower(str2[i]))
         {

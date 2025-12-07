@@ -25,8 +25,10 @@
 #endif
 
 #include <GL/gl.h>
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(__morphos__)
 #include <GL/glext.h>
+#elif defined(__morphos__)
+#include <SDL_opengl_glext.h>
 #else
 // The file glext.h is not available in the Visual Studio Platform Toolset.
 // Below is the specific definition from glext.h that is needed in this source file.

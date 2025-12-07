@@ -289,7 +289,6 @@ static void
 SDL_ALService(void)
 {
 	uint8_t 	a,v;
-	uint16_t	w;
 
 	if (!sqActive)
 		return;
@@ -297,11 +296,22 @@ SDL_ALService(void)
 	// REFKEEN - Looks like this the comparison is unsigned in original EXE
 	while (sqHackLen && ((uint32_t)sqHackTime <= alTimeCount))
 	{
-		w = *sqHackPtr++;
-		sqHackTime = alTimeCount + *sqHackPtr++;
-		// REFKEEN - This is the case on Little and Big Endian altogether
-		a = *((uint8_t *)&w);
-		v = *((uint8_t *)&w + 1);
+		// IMF format: bytes are [reg, val, delay_low, delay_high] stored as little-endian
+		// Read bytes directly to avoid endian issues when extracting register/value
+		uint8_t* bytePtr = (uint8_t*)sqHackPtr;
+		a = bytePtr[0];  // register (always byte 0)
+		v = bytePtr[1];  // value (always byte 1)
+		
+		// Read delay as little-endian uint16_t (bytes 2-3)
+#ifdef REFKEEN_ARCH_BIG_ENDIAN
+		uint16_t delay = bytePtr[2] | (bytePtr[3] << 8);  // little-endian read
+#else
+		uint16_t delay = *(uint16_t*)(bytePtr + 2);
+#endif
+		sqHackTime = alTimeCount + delay;
+		
+		// Advance pointer by 2 uint16_t (4 bytes total)
+		sqHackPtr += 2;
 
 		alOut(a,v);
 		sqHackLen -= 4;

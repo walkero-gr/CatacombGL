@@ -16,6 +16,10 @@
 #include "GameDetection.h"
 #include <filesystem>
 
+#if defined(__morphos__)
+#define UINT16_MAX ((uint16_t)(65535U))
+#endif
+
 namespace fs = std::filesystem;
 
 GameDetection::GameDetection()

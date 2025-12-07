@@ -142,7 +142,8 @@ FileChunk* AudioRepository::GetMusicTrack(const uint16_t index)
         return nullptr;
     }
 
-    const uint16_t chunkIndex = index + (m_staticData.lastSound * 3);
+    uint16_t chunkIndex = index + (m_staticData.lastSound * 3);
+
     if (chunkIndex >= m_staticData.offsets.size())
     {
         return nullptr;
@@ -152,16 +153,15 @@ FileChunk* AudioRepository::GetMusicTrack(const uint16_t index)
     {
         uint8_t* compressedSound = (uint8_t*)&m_rawData->GetChunk()[m_staticData.offsets.at(chunkIndex)];
         uint32_t compressedSize = GetChunkSize(index + (m_staticData.lastSound * 3)) - sizeof(uint32_t);
-#ifdef IS_BIG_ENDIAN
-        uint32_t uncompressedSize = __builtin_bswap32(*(uint32_t*)compressedSound);
-#else
         uint32_t uncompressedSize = *(uint32_t*)compressedSound;
+#ifdef IS_BIG_ENDIAN
+        uncompressedSize = __builtin_bswap32(uncompressedSize);
 #endif
         FileChunk* soundChunk = m_huffman->Decompress(&compressedSound[sizeof(uint32_t)], compressedSize, uncompressedSize);
+
+        uint16_t musicTrackLength = *(uint16_t*)soundChunk->GetChunk();
 #ifdef IS_BIG_ENDIAN
-        const uint16_t musicTrackLength = __builtin_bswap16(*(uint16_t*)soundChunk->GetChunk());
-#else
-        const uint16_t musicTrackLength = *(uint16_t*)soundChunk->GetChunk();
+        musicTrackLength = __builtin_bswap16(musicTrackLength);
 #endif
 
         // Music tracks in the Catacomb 3D games are stored as IMF data, which essentially consists of a stream of

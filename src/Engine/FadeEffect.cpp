@@ -53,8 +53,8 @@ void FadeEffect::DrawOverlay(IRenderer& renderer, const uint32_t milliSec)
         for (uint32_t p = m_pixelsRemoved; p < pixelsToRemove; p++)
         {
             // Seperate random value into x/y pair
-            const int32_t x = m_rndval >> rndbits_y;
-            const int32_t y = m_rndval & ((1 << rndbits_y) - 1);
+            const uint32_t x = m_rndval >> rndbits_y;
+            const uint32_t y = m_rndval & ((1 << rndbits_y) - 1);
 
             // Advance to next random element
             m_rndval = (m_rndval >> 1) ^ (m_rndval & 1 ? 0 : rndmask);

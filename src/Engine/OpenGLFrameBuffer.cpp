@@ -15,8 +15,10 @@
 
 #include "OpenGLFrameBuffer.h"
 #include "../Engine/Logging.h"
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(__morphos__)
 #include <GL/glext.h>
+#elif defined(__morphos__)
+#include <SDL_opengl_glext.h>
 #else
 // The file glext.h is not available in the Visual Studio Platform Toolset.
 // Below are the specific definitions from glext.h that are needed in this source file.

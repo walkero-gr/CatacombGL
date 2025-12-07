@@ -1569,7 +1569,7 @@ void EngineCore::PerformActionOnActor(Actor* actor)
             actor->SetTimeToNextAction(m_timeStampOfWorldCurrentFrame + 4000 + (rand() % 4) * 1000);
         }
         if ((m_timeStampOfWorldCurrentFrame >= actor->GetTimeToNextAction()) ||
-            (std::abs(m_level->GetPlayerActor()->GetX() - actor->GetX()) < 2.0f + actor->GetDecorateActor().size) && (std::abs(m_level->GetPlayerActor()->GetY() - actor->GetY()) < 2.0f + actor->GetDecorateActor().size))
+            ((std::abs(m_level->GetPlayerActor()->GetX() - actor->GetX()) < 2.0f + actor->GetDecorateActor().size) && (std::abs(m_level->GetPlayerActor()->GetY() - actor->GetY()) < 2.0f + actor->GetDecorateActor().size)))
         {
             if ((std::abs(m_level->GetPlayerActor()->GetX() - actor->GetX()) > 1.1f + actor->GetDecorateActor().size) ||
                 (std::abs(m_level->GetPlayerActor()->GetY() - actor->GetY()) > 1.1f + actor->GetDecorateActor().size))
@@ -2528,8 +2528,8 @@ bool EngineCore::Chase(Actor* actor, const bool diagonal, const ChaseTarget targ
 
     // The water troll in Abyss and the water dragon in Armageddon move slower when under water.
     // The blob from Apocalypse moves slower when in shadow mode.
-    if (actor->GetState() == StateIdHidden &&
-        (((m_game.GetId() == GameId::CatacombAbyssv113 || m_game.GetId() == GameId::CatacombAbyssv124 || m_game.GetId() == GameId::CatacombArmageddonv102) && actor->GetDecorateActor().id == 61)) ||
+    if ((actor->GetState() == StateIdHidden &&
+        (((m_game.GetId() == GameId::CatacombAbyssv113 || m_game.GetId() == GameId::CatacombAbyssv124 || m_game.GetId() == GameId::CatacombArmageddonv102) && actor->GetDecorateActor().id == 61))) ||
         ((m_game.GetId() == GameId::CatacombApocalypsev101 && actor->GetDecorateActor().id == 54)))
     {
         speed = 1200;
@@ -2772,7 +2772,7 @@ void EngineCore::BunnyHopping(Actor* actor)
     { southwest,northeast } // northwest
     };
 
-    actorDirection player_dir;
+    actorDirection player_dir = north;
     const float playerAngle = m_level->GetPlayerActor()->GetAngle();
     if ((playerAngle > 337) || (playerAngle <= 22))
     {

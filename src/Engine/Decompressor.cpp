@@ -353,7 +353,7 @@ static int16_t DecodePosition(uint8_t **infile_ptr,uint32_t *CompressLength)
 		i = (i << 1) + GetBit(infile_ptr, CompressLength);
 	}
 
-	return c | i & 0x3f;
+	return c | (i & 0x3f);
 }
 
 //---------------------------------------------------------------------------
