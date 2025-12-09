@@ -98,8 +98,19 @@ void SetScreenMode(const uint8_t screenMode, SDL_Window* window)
         const int displayIndex = SDL_GetWindowDisplayIndex(window);
         SDL_Rect r;
         SDL_GetDisplayBounds(displayIndex, &r);
+
+#ifdef __amigaos4__
+        // Resize the window to the desktop resolution before going fullscreen
+        // This works better on AmigaOS 4 than SDL_SetWindowDisplayMode
+        SDL_SetWindowSize(window, r.w, r.h);
+        
+        // Process events to ensure the resize is applied
+        SDL_PumpEvents();
+        SDL_Delay(50);
+#else
         const SDL_DisplayMode displayMode = { SDL_PIXELFORMAT_RGB24, r.w, r.h, 0, 0 };
         SDL_SetWindowDisplayMode(window, &displayMode);
+#endif
         SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
     }
     else if (screenMode == CVarItemIdScreenModeBorderlessWindowed)
