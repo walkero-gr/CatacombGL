@@ -61,7 +61,7 @@ extern "C" {
 #endif
 
 #ifdef __amigaos4__
-#define VSTRING     "CatacombGL 0.5.6r1 (10.12.2024)"
+#define VSTRING     "CatacombGL 0.5.7 (09.12.2025)"
 #define VERSTAG     "\0$VER: " VSTRING
 static CONST_STRPTR stack USED = "$STACK:102400";
 static CONST_STRPTR version USED = VERSTAG;
